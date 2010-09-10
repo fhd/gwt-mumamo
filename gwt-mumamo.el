@@ -3,7 +3,7 @@
 ;; Copyright (C) 2010 Felix H. Dahlke
 
 ;; Author: Felix H. Dahlke <fhd@ubercode.de>
-;; Version: 1.1
+;; Version: 1.2
 ;; Keywords: languages, gwt
 
 ;; This file is not part of GNU Emacs.
@@ -23,7 +23,8 @@
 
 ;; If your Emacs version is 23.1 or below, you will need espresso-mode:
 ;;   http://www.nongnu.org/espresso/
-;; You also need an alias to it, add the following to your init file:
+;; You also need to add an alias to it, add the following to your init
+;; file:
 ;;   (defalias 'js-mode 'espresso-mode)
 
 ;; Add this file to your load-path and add the following line to your
@@ -50,11 +51,46 @@
 
 ;;; Code:
 
-(require 'mumamo-fun)
+(require 'mumamo)
+
+(defconst mumamo-gwt-jsni-start-regex (rx "/*-" space "{"))
+
+(defconst mumamo-gwt-jsni-end-regex (rx "}" space "-*/"))
+
+(defun mumamo-search-bw-exc-start-gwt-jsni (pos min)
+  ;; TODO: Check if the block follows a native method declaration
+  ;; (goto-char (+ pos 3))
+  ;; (let ((marker-start (search-backward "/*-" min t))
+  ;;       exc-start)
+  ;;   (when marker-start
+  ;;     (when (looking-at mumamo-gwt-jsni-start-regex)
+  ;;       (setq exc-start (match-end 0))
+  ;;       (goto-char exc-start)
+  ;;       (when (<= exc-start pos)
+  ;;         (list (point) 'js-mode))))))
+  (let ((exc-start (mumamo-chunk-start-bw-str pos min "/*-{")))
+    (and exc-start
+         (<= exc-start pos)
+         (cons exc-start 'espresso-mode)))) ;; TODO: Use "js-mode"
+                                            ;; (alias causes hangup)
+
+(defun mumamo-search-bw-exc-end-gwt-jsni (pos min)
+  (mumamo-chunk-end-bw-str pos min "}-*/")) ;; TODO: Use regex
+
+(defun mumamo-search-fw-exc-start-gwt-jsni (pos max)
+  (mumamo-chunk-start-fw-str pos max "/*-{")) ;; TODO: Use regex
+
+(defun mumamo-search-fw-exc-end-gwt-jsni (pos max)
+  (save-match-data
+    (mumamo-chunk-end-fw-str pos max "}-*/"))) ;; TODO: Use regex
 
 (defun mumamo-chunk-gwt-jsni (pos min max)
-  "Find /*- ... -*/, return range and js-mode."
-  (mumamo-quick-static-chunk pos min max "/*-{" "}-*/" nil 'js-mode nil))
+  "Find /*-{ ... }-*/, return range and js-mode."
+  (mumamo-find-possible-chunk pos min max
+                              'mumamo-search-bw-exc-start-gwt-jsni
+                              'mumamo-search-bw-exc-end-gwt-jsni
+                              'mumamo-search-fw-exc-start-gwt-jsni
+                              'mumamo-search-fw-exc-end-gwt-jsni))
 
 (define-mumamo-multi-major-mode gwt-mumamo-mode
   "Turn on multiple major modes for Google Web Toolkit code.
