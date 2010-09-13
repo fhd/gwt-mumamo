@@ -32,6 +32,17 @@
 ;;   (autoload 'gwt-mumamo-mode "gwt-mumamo" "" t)
 ;; You can now activate gwt-mumamo by invoking "gwt-mumamo-mode"
 
+;; gwt-mumamo works just like java-mode when used for normal Java
+;; files, so you can use it as the standard mode for all .java files
+;; if you like:
+;;   (add-to-list 'auto-mode-alist '("\.java$" . gwt-mumamo-mode))
+
+;; The only notable difference between java-mode and gwt-mumamo-mode
+;; is the background colour, because mumamo changes it. If you want
+;; the same background colour as in other modes, add:
+;;   (setq mumamo-chunk-coloring 1)
+;; This will make mumamo colour only inline code.
+
 ;;; License:
 
 ;; This program is free software; you can redistribute it and/or
