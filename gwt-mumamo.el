@@ -3,7 +3,7 @@
 ;; Copyright (C) 2010 Felix H. Dahlke
 
 ;; Author: Felix H. Dahlke <fhd@ubercode.de>
-;; Version: 1.2
+;; Version: 1.2.0
 ;; Keywords: languages, gwt
 
 ;; This file is not part of GNU Emacs.
