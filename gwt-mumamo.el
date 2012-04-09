@@ -108,4 +108,5 @@
 The main mode is `java-mode', `js-mode' is used for JSNI blocks."
   ("GWT Family" java-mode (mumamo-chunk-gwt-jsni)))
 
+(provide 'gwt-mumamo)
 ;;; gwt-mumamo.el ends here
